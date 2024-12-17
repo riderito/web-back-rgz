@@ -204,37 +204,22 @@ def start():
         cur.execute("SELECT id, title, content, created_at, votes, user_id FROM initiatives ORDER BY votes DESC LIMIT ? OFFSET ?;", (per_page, offset))
 
     initiatives = cur.fetchall()
-
+    
     # Форматируем дату и добавляем порядковый номер
     formatted_initiatives = []
     for i, initiative in enumerate(initiatives):
         # Преобразуем кортеж или словарь
         if isinstance(initiative, tuple):
             id, title, content, created_at, votes, user_id = initiative
-            if current_app.config['DB_TYPE'] == 'postgres':
-                formatted_initiatives.append({
-                    'id': id,
-                    'title': title,
-                    'content': content,
-                    'created_at': created_at.strftime("%d.%m.%Y %H:%M") if isinstance(created_at, datetime) else created_at,
-                    'votes': votes,
-                    'number': i + 1 + offset,  # Добавляем порядковый номер
-                    'user_id': user_id
-                })
-            else:
-                # Преобразование строки даты в объект datetime
-                if isinstance(created_at, str):
-                    created_at = datetime.strptime(created_at, "%Y-%m-%d %H:%M:%S")
-
-                formatted_initiatives.append({
-                    'id': id,
-                    'title': title,
-                    'content': content,
-                    'created_at': created_at.strftime("%d.%m.%Y %H:%M"),
-                    'votes': votes,
-                    'number': i + 1 + offset,
-                    'user_id': user_id
-                })
+            formatted_initiatives.append({
+                'id': id,
+                'title': title,
+                'content': content,
+                'created_at': created_at.strftime("%d.%m.%Y %H:%M") if isinstance(created_at, datetime) else created_at,
+                'votes': votes,
+                'number': i + 1 + offset,  # Добавляем порядковый номер
+                'user_id': user_id
+            })
         elif isinstance(initiative, dict):  # Если возвращается словарь
             initiative['created_at'] = initiative['created_at'].strftime("%d.%m.%Y %H:%M") if isinstance(initiative['created_at'], datetime) else initiative['created_at']
             initiative['number'] = i + 1 + offset  # Добавляем порядковый номер
