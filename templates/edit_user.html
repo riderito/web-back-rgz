@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Редактировать пользователя</h2>
+<form method="POST" action="{{ url_for('edit_user', user_id=user.id) }}">
+    <label for="login">Логин:</label><br>
+    <input type="text" id="login" name="login" value="{{ user.login }}" required><br><br>
+    
+    <label for="is_admin">Администратор:</label>
+    <input type="checkbox" id="is_admin" name="is_admin" {% if user.is_admin %}checked{% endif %}><br><br>
+    
+    <button type="submit">Сохранить</button>
+</form>
+{% endblock %}

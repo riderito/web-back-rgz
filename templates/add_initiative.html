@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Добавить инициативу</h1>
+<form action="/add_initiative" method="POST">
+    <label for="title">Тема инициативы:</label><br>
+    <input type="text" id="title" name="title" required><br>
+    <label for="content">Описание:</label><br>
+    <textarea id="content" name="content" rows="5" required></textarea><br>
+    <button type="submit">Добавить</button>
+</form>
+{% if error %}
+<p style="color:red;">{{ error }}</p>
+{% endif %}
+{% endblock %}

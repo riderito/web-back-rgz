@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block js %}
+<script>
+    document.querySelectorAll('.vote-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            const initiativeId = this.dataset.id;
+            const voteType = this.dataset.type;
+    
+            fetch('/vote', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: initiativeId, vote: voteType })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const initiativeDiv = document.querySelector(`.initiative[data-id="${initiativeId}"]`);
+                    
+                    if (data.deleted) {
+                        // Уведомляем об удалении и убираем DOM-элемент
+                        alert('Инициатива удалена из-за низкого рейтинга!');
+                        initiativeDiv.remove();
+                    } else if (data.updated_votes !== undefined) {
+                        // Обновляем количество голосов
+                        const votesSpan = document.getElementById(`votes-${initiativeId}`);
+                        votesSpan.textContent = data.updated_votes;
+                    }
+                } else {
+                    // Обрабатываем ошибки
+                    alert(data.error || 'Ошибка при голосовании');
+                }
+            })
+            .catch(error => console.error('Ошибка:', error));
+        });
+    });      
+</script>
+{% endblock %} 
+
+{% block content %}
+<h1>Инициативы</h1>
+<div class="initiatives">
+    {% for initiative in initiatives %}
+    <div class="initiative" data-id="{{ initiative['id'] }}">
+        <h1>{{ initiative['number'] }}</h1>
+        <h2>{{ initiative['title'] }}</h2>
+        <p>{{ initiative['content'] }}</p>
+        <small>Дата: {{ initiative['created_at'] }}</small>
+        <p>Текущее количество голосов: <span id="votes-{{ initiative['id'] }}">{{ initiative['votes'] }}</span></p>
+        {% if session.get('login') %}
+            <button class="vote-btn" data-id="{{ initiative['id'] }}" data-type="up">👍</button>
+            <button class="vote-btn" data-id="{{ initiative['id'] }}" data-type="down">👎</button>
+        {% endif %}
+        {% if session.get('user_id') == initiative.user_id %}
+            <form method="POST" action="{{ url_for('delete_initiative', initiative_id=initiative.id) }}">
+                <button type="submit" style="color:red;">Удалить</button>
+            </form>
+        {% endif %}
+        {% if session.get('is_admin') %}
+            <form method="POST" action="{{ url_for('admin_delete_initiative', initiative_id=initiative.id) }}">
+                <button type="submit" style="color:red;">Удалить инициативу</button>
+            </form>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+
+{% if page %}
+<div class="pagination">
+    {% if page > 1 %}
+        <button onclick="location.href='{{ url_for('start', page=page-1) }}'">Назад</button>
+    {% endif %}
+    {% if has_next_page %}
+        <button onclick="location.href='{{ url_for('start', page=page+1) }}'">Ещё</button>
+    {% endif %}
+</div>
+{% endif %}
+
+{% if not initiatives %}
+    <p>Инициатив пока нет. Будьте первым, кто предложит свою!</p>
+{% endif %}
+{% endblock %}

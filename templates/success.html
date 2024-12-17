@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div>
+    {% if action == 'register' %}
+        <h1>Добро пожаловать, {{ login }}!</h1>
+        <p>Вы успешно зарегистрировались и вошли в систему.</p>
+    {% elif action == 'login' %}
+        <h1>Рады, что вы вернулись, {{ login }}!</h1>
+        <p>Вы успешно вошли в систему.</p>
+    {% else %}
+        <h1>Успешное действие!</h1>
+        <p>Детали не указаны.</p>
+    {% endif %}
+    <a href="{{ url_for('start') }}"><button>Перейти к инициативам</button></a>
+</div>
+{% endblock %}

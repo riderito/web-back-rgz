@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Портал инициатив</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link rel="icon" href="{{ url_for('static', filename='favicon-16x16.png') }}">
+    <link rel="icon" href="{{ url_for('static', filename='favicon-32x32.png') }}">
+</head>
+<body>
+    <header>
+        <h1>Сайт инициатив</h1>
+        <nav>
+            <a href="{{ url_for('index') }}">Главная</a>
+            <a href="{{ url_for('start') }}">Инициативы</a>
+            {% if session.get('user_id') %}
+                <a href="{{ url_for('add_initiative') }}">Добавить инициативу</a>
+                <a href="{{ url_for('profile') }}">Мой профиль</a>
+                {% if session.get('is_admin') %}
+                    <a href="{{ url_for('admin_users') }}">Управление пользователями</a>
+                {% endif %}
+                <a href="{{ url_for('logout') }}">Выйти</a>
+            {% else %}
+                <a href="{{ url_for('login') }}">Вход</a>
+            {% endif %}
+        </nav>
+    </header>
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+    <footer>
+        <p>© 2024 Степук Алексей Витальевич, ФБИ-24</p>
+    </footer>
+</body>
+{% block js %}
+{% endblock %}
+</html>
