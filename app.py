@@ -199,9 +199,9 @@ def start():
 
     # Выполняем запрос к базе данных
     if current_app.config['DB_TYPE'] == 'postgres':
-        cur.execute("SELECT id, title, content, created_at, votes, user_id FROM initiatives ORDER BY votes DESC, created_at DESC LIMIT %s OFFSET %s;", (per_page, offset))
+        cur.execute("SELECT id, title, content, created_at, votes, user_id FROM initiatives ORDER BY votes DESC LIMIT %s OFFSET %s;", (per_page, offset))
     else:
-        cur.execute("SELECT id, title, content, created_at, votes, user_id FROM initiatives ORDER BY votes DESC, created_at DESC LIMIT ? OFFSET ?;", (per_page, offset))
+        cur.execute("SELECT id, title, content, created_at, votes, user_id FROM initiatives ORDER BY votes DESC LIMIT ? OFFSET ?;", (per_page, offset))
 
     initiatives = cur.fetchall()
 
