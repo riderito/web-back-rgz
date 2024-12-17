@@ -55,9 +55,18 @@
 
 {% block content %}
 <h1>Инициативы</h1>
+
 {% if session.get('user_id') %}
 <button onclick="location.href='{{ url_for('add_initiative') }}'">Создай свою инициативу</button>
 {% endif %}
+
+{% if initiatives %}
+<div>
+    <a href="{{ url_for('start', sort='newest') }}">Самые новые</a> |
+    <a href="{{ url_for('start', sort='oldest') }}">Самые старые</a> |
+    <a href="{{ url_for('start', sort='votes_high') }}">Больше всего голосов</a> |
+    <a href="{{ url_for('start', sort='votes_low') }}">Меньше всего голосов</a>
+</div>
 <div class="initiatives">
     {% for initiative in initiatives %}
     <div class="initiative" data-id="{{ initiative['id'] }}">
@@ -89,6 +98,7 @@
     </div>
     {% endfor %}
 </div>
+{% endif %}
 
 {% if page %}
 <div class="pagination">

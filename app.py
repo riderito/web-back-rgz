@@ -220,29 +220,44 @@ def start():
     offset = (page - 1) * per_page
     user_id = session.get('user_id')
 
+    # Получаем параметр сортировки (по умолчанию 'newest')
+    sort_by = request.args.get('sort', 'votes_high')
+
+    # Формируем SQL-запрос в зависимости от параметра сортировки
+    if sort_by == 'newest':
+        order_clause = 'ORDER BY created_at DESC'
+    elif sort_by == 'oldest':
+        order_clause = 'ORDER BY created_at ASC'
+    elif sort_by == 'votes_high':
+        order_clause = 'ORDER BY votes DESC'
+    elif sort_by == 'votes_low':
+        order_clause = 'ORDER BY votes ASC'
+    else:
+        order_clause = 'ORDER BY votes DESC'  # По умолчанию
+
     conn, cur = db_connect()
 
     # Выполняем запрос к базе данных
     if current_app.config['DB_TYPE'] == 'postgres':
-        cur.execute("""
+        cur.execute(f"""
             SELECT i.id, i.title, i.content, 
                    TO_CHAR(i.created_at, 'DD.MM.YYYY HH24:MI') AS created_at, 
                    i.votes, i.user_id,
                    v.vote_type AS user_vote
             FROM initiatives i
             LEFT JOIN votes v ON i.id = v.initiative_id AND v.user_id = %s
-            ORDER BY i.votes DESC
+            {order_clause}
             LIMIT %s OFFSET %s;
         """, (user_id, per_page, offset))
     else:
-        cur.execute("""
+        cur.execute(f"""
             SELECT i.id, i.title, i.content, 
                    strftime('%d.%m.%Y %H:%M', datetime(i.created_at, '+7 hours')) AS created_at, 
                    i.votes, i.user_id,
                    v.vote_type AS user_vote
             FROM initiatives i
             LEFT JOIN votes v ON i.id = v.initiative_id AND v.user_id = ?
-            ORDER BY i.votes DESC
+            {order_clause}
             LIMIT ? OFFSET ?;
         """, (user_id, per_page, offset))
 
