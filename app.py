@@ -204,7 +204,6 @@ def start():
         cur.execute("SELECT id, title, content, created_at, votes, user_id FROM initiatives ORDER BY votes DESC LIMIT ? OFFSET ?;", (per_page, offset))
 
     initiatives = cur.fetchall()
-    print(initiatives)  # Проверьте, что данные из БД корректно получены
 
     # Форматируем дату и добавляем порядковый номер
     formatted_initiatives = []

@@ -39,6 +39,7 @@
 
 {% block content %}
 <h1>Инициативы</h1>
+<pre>{{ initiatives }}</pre>
 <div class="initiatives">
     {% for initiative in initiatives %}
     <div class="initiative" data-id="{{ initiative['id'] }}">
