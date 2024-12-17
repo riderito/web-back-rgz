@@ -199,12 +199,12 @@ def start():
 
     # Выполняем запрос к базе данных
     if current_app.config['DB_TYPE'] == 'postgres':
-        cur.execute("""SELECT id, title, content, TO_CHAR(created_at, 'YYYY-MM-DD HH24:MI') AS created_at, votes, user_id
+        cur.execute("""SELECT id, title, content, TO_CHAR(created_at, 'DD.MM.YYYY HH24:MI') AS created_at, votes, user_id
                     FROM initiatives
                     ORDER BY votes DESC
                     LIMIT %s OFFSET %s;""", (per_page, offset))
     else:
-        cur.execute("""SELECT id, title, content, strftime('%Y-%m-%d %H:%M', created_at) as created_at, votes, user_id
+        cur.execute("""SELECT id, title, content, strftime('%d.%m.%Y %H:%M', created_at) as created_at, votes, user_id
                     FROM initiatives
                     ORDER BY votes DESC
                     LIMIT ? OFFSET ?;""", (per_page, offset))
