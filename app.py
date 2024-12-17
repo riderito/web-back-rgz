@@ -480,7 +480,10 @@ def edit_user(user_id):
     conn, cur = db_connect()
 
     if request.method == 'GET':
-        cur.execute("SELECT id, login, is_admin FROM users WHERE id = %s;", (user_id,))
+        if current_app.config['DB_TYPE'] == 'postgres':
+            cur.execute("SELECT id, login, is_admin FROM users WHERE id = %s;", (user_id,))
+        else:
+            cur.execute("SELECT id, login, is_admin FROM users WHERE id = ?;", (user_id,))
         user = cur.fetchone()
         if not user:
             abort(404)
@@ -489,11 +492,16 @@ def edit_user(user_id):
     # POST: обновляем пользователя
     login = request.form.get('login')
     is_admin = request.form.get('is_admin') == 'on'
-
-    cur.execute(
-        "UPDATE users SET login = %s, is_admin = %s WHERE id = %s;",
-        (login, is_admin, user_id)
-    )
+    if current_app.config['DB_TYPE'] == 'postgres':
+        cur.execute(
+            "UPDATE users SET login = %s, is_admin = %s WHERE id = %s;",
+            (login, is_admin, user_id)
+        )
+    else:
+        cur.execute(
+            "UPDATE users SET login = ?, is_admin = ? WHERE id = ?;",
+            (login, is_admin, user_id)
+        )
     conn.commit()
     
     db_close(conn, cur)
@@ -504,7 +512,10 @@ def edit_user(user_id):
 @admin_required
 def delete_user(user_id):
     conn, cur = db_connect()
-    cur.execute("DELETE FROM users WHERE id = %s;", (user_id,))
+    if current_app.config['DB_TYPE'] == 'postgres':
+        cur.execute("DELETE FROM users WHERE id = %s;", (user_id,))
+    else:
+        cur.execute("DELETE FROM users WHERE id = ?;", (user_id,))
     conn.commit()
     db_close(conn, cur)
     return redirect(url_for('admin_users'))
@@ -514,7 +525,10 @@ def delete_user(user_id):
 @admin_required
 def admin_delete_initiative(initiative_id):
     conn, cur = db_connect()
-    cur.execute("DELETE FROM initiatives WHERE id = %s;", (initiative_id,))
+    if current_app.config['DB_TYPE'] == 'postgres':
+        cur.execute("DELETE FROM initiatives WHERE id = %s;", (initiative_id,))
+    else:
+        cur.execute("DELETE FROM initiatives WHERE id = ?;", (initiative_id,))
     conn.commit()
     db_close(conn, cur)
     return redirect(url_for('start'))
