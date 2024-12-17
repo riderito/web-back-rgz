@@ -199,12 +199,12 @@ def start():
 
     # Выполняем запрос к базе данных
     if current_app.config['DB_TYPE'] == 'postgres':
-        cur.execute("""SELECT id, title, content, created_at, votes, user_id
+        cur.execute("""SELECT id, title, content, TO_CHAR(created_at, 'YYYY-MM-DD HH24:MI') AS created_at, votes, user_id
                     FROM initiatives
                     ORDER BY votes DESC
                     LIMIT %s OFFSET %s;""", (per_page, offset))
     else:
-        cur.execute("""SELECT id, title, content, created_at, votes, user_id
+        cur.execute("""SELECT id, title, content, strftime('%Y-%m-%d %H:%M', created_at) as created_at, votes, user_id
                     FROM initiatives
                     ORDER BY votes DESC
                     LIMIT ? OFFSET ?;""", (per_page, offset))
@@ -218,9 +218,7 @@ def start():
             'id': initiative['id'] if isinstance(initiative, dict) else initiative[0],
             'title': initiative['title'] if isinstance(initiative, dict) else initiative[1],
             'content': initiative['content'] if isinstance(initiative, dict) else initiative[2],
-            'created_at': (initiative['created_at'] if isinstance(initiative, dict) else initiative[3]).strftime("%d.%m.%Y %H:%M") 
-                          if isinstance(initiative['created_at'] if isinstance(initiative, dict) else initiative[3], datetime) 
-                          else initiative['created_at'] if isinstance(initiative, dict) else initiative[3],
+            'created_at': initiative['created_at'] if isinstance(initiative, dict) else initiative[3],
             'votes': initiative['votes'] if isinstance(initiative, dict) else initiative[4],
             'number': i + 1 + offset,  # Добавляем порядковый номер
             'user_id': initiative['user_id'] if isinstance(initiative, dict) else initiative[5]
