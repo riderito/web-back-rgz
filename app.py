@@ -206,25 +206,18 @@ def start():
     initiatives = cur.fetchall()
     
     # Форматируем дату и добавляем порядковый номер
+    # Форматируем дату и добавляем порядковый номер
     formatted_initiatives = []
     for i, initiative in enumerate(initiatives):
-        # Преобразуем кортеж или словарь
-        if isinstance(initiative, tuple):
-            id, title, content, created_at, votes, user_id = initiative
-            formatted_initiatives.append({
-                'id': id,
-                'title': title,
-                'content': content,
-                'created_at': created_at.strftime("%d.%m.%Y %H:%M") if isinstance(created_at, datetime) else created_at,
-                'votes': votes,
-                'number': i + 1 + offset,  # Добавляем порядковый номер
-                'user_id': user_id
-            })
-        elif isinstance(initiative, dict):  # Если возвращается словарь
-            initiative['created_at'] = initiative['created_at'].strftime("%d.%m.%Y %H:%M") if isinstance(initiative['created_at'], datetime) else initiative['created_at']
-            initiative['number'] = i + 1 + offset  # Добавляем порядковый номер
-            formatted_initiatives.append(initiative)
-
+        formatted_initiatives.append({
+            'id': initiative['id'],
+            'title': initiative['title'],
+            'content': initiative['content'],
+            'created_at': initiative['created_at'].strftime("%d.%m.%Y %H:%M") if isinstance(initiative['created_at'], datetime) else initiative['created_at'],
+            'votes': initiative['votes'],
+            'number': i + 1 + offset,  # Добавляем порядковый номер
+            'user_id': initiative['user_id']
+        })
 
     # Проверяем наличие следующей страницы
     if current_app.config['DB_TYPE'] == 'postgres':
