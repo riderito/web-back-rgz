@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Портал инициатив</title>
+    <title>Портал инициатив {% block title %}{% endblock %}</title>
+    {% block style %}{% endblock %}
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
@@ -12,19 +13,45 @@
 </head>
 <body>
     <header>
-        <h1>Сайт инициатив</h1>
-        <nav>
-            <a href="{{ url_for('index') }}">Главная</a>
-            <a href="{{ url_for('start') }}">Инициативы</a>
-            {% if session.get('user_id') %}
-                <a href="{{ url_for('profile') }}">Мой профиль</a>
+        <nav class="navbar">
+            <ul class="navbar__menu">
+              <li class="navbar__item">
+                <a href="{{ url_for('index') }}" class="navbar__link">
+                  <i data-feather="home"></i><span>Домашняя страница</span>
+                </a>
+              </li>
+              <li class="navbar__item">
+                <a href="{{ url_for('start') }}" class="navbar__link">
+                  <i data-feather="message-square"></i><span>Инициативы</span>
+                </a>
+              </li>
+              {% if session.get('user_id') %}
+                <li class="navbar__item">
+                  <a href="{{ url_for('profile') }}" class="navbar__link">
+                    <i data-feather="user"></i><span>Мой профиль</span>
+                  </a>
+                </li>
                 {% if session.get('is_admin') %}
-                    <a href="{{ url_for('admin_users') }}">Управление пользователями</a>
+                  <li class="navbar__item">
+                    <a href="{{ url_for('admin_users') }}" class="navbar__link">
+                      <i data-feather="users"></i><span>Управление пользователями</span>
+                    </a>
+                  </li>
                 {% endif %}
-                <a href="{{ url_for('logout') }}">Выйти</a>
-            {% else %}
-                <a href="{{ url_for('login') }}">Вход</a>
-            {% endif %}
+                <li class="navbar__item">
+                  <a href="{{ url_for('logout') }}" class="navbar__link">
+                    <i data-feather="log-out"></i><span>Выйти</span>
+                  </a>
+                </li>
+              {% else %}
+                <li class="navbar__item">
+                  <a href="{{ url_for('login') }}" class="navbar__link">
+                    <i data-feather="log-in"></i><span>Вход</span>
+                  </a>
+                </li>
+              {% endif %}
+            </ul>
+            <div class="navbar__text">Инициативы</div>
         </nav>
     </header>
     <main>
@@ -35,6 +62,10 @@
         <p>© 2024 Степук Алексей Витальевич, ФБИ-24</p>
     </footer>
 </body>
+<script src="https://unpkg.com/feather-icons"></script>
+  <script>
+    feather.replace();
+  </script>
 {% block js %}
 {% endblock %}
 </html>

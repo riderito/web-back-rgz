@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 
+{% block title %}
+— Инициативы
+{% endblock %}
+
 {% block js %}
 <script>
     document.querySelectorAll('.vote-btn').forEach(button => {
@@ -57,49 +61,61 @@
 <h1>Инициативы</h1>
 
 {% if session.get('user_id') %}
-<button onclick="location.href='{{ url_for('add_initiative') }}'">Создай свою инициативу</button>
+    <div style="text-align: center; margin-bottom: 2.7rem;">
+        <button class="home-page__button" onclick="location.href='{{ url_for('add_initiative') }}'">Создай свою инициативу</button>
+    </div>
 {% endif %}
 
 {% if initiatives %}
-<div>
+<div class="sorting-links">
     <a href="{{ url_for('start', sort='newest') }}">Самые новые</a> |
     <a href="{{ url_for('start', sort='oldest') }}">Самые старые</a> |
     <a href="{{ url_for('start', sort='votes_high') }}">Больше всего голосов</a> |
     <a href="{{ url_for('start', sort='votes_low') }}">Меньше всего голосов</a>
 </div>
+
 <div class="initiatives">
     {% for initiative in initiatives %}
     <div class="initiative" data-id="{{ initiative['id'] }}">
-        <h1>{{ initiative['number'] }}</h1>
-        <h2>{{ initiative['title'] }}</h2>
-        <p>{{ initiative['content'] }}</p>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <h1 style="font-size: 2rem; flex-shrink: 0; margin: 0;">{{ initiative['number'] }}</h1>
+            <h2 style="margin: 0;">{{ initiative['title'] }}</h2>
+        </div>
+        <p class="pofini">{{ initiative['content'] }}</p>
         <small>Дата: {{ initiative['created_at'] }}</small>
-        <p>Текущее количество голосов: <span id="votes-{{ initiative['id'] }}">{{ initiative['votes'] }}</span></p>
-        {% if session.get('user_id') %}
-        <button class="vote-btn" data-id="{{ initiative['id'] }}" data-type="up"
-                style="background-color: {% if initiative['user_vote'] == 'up' %}black{% else %}inherit{% endif %};">
-            👍
-        </button>
-        <button class="vote-btn" data-id="{{ initiative['id'] }}" data-type="down"
-                style="background-color: {% if initiative['user_vote'] == 'down' %}black{% else %}inherit{% endif %};">
-            👎
-        </button>
-        {% endif %}
-        {% if session.get('user_id') == initiative.user_id %}
-            <form method="POST" action="{{ url_for('delete_initiative', initiative_id=initiative.id) }}">
-                <button type="submit">Удалить</button>
-            </form>
-        {% endif %}
-        {% if session.get('is_admin') %}
-            <form method="POST" action="{{ url_for('admin_delete_initiative', initiative_id=initiative.id) }}">
-                <button type="submit">Удалить инициативу</button>
-            </form>
-        {% endif %}
+        <p class="pofini">Кол-во голосов: <span id="votes-{{ initiative['id'] }}">{{ initiative['votes'] }}</span></p>
+        
+        <div class="button-container">
+            <!-- Кнопки голосования -->
+            {% if session.get('user_id') %}
+                <button class="vote-btn {% if initiative['user_vote'] == 'up' %}active-vote{% endif %}" 
+                        data-id="{{ initiative['id'] }}" data-type="up">
+                    👍
+                </button>
+                <button class="vote-btn {% if initiative['user_vote'] == 'down' %}active-vote{% endif %}" 
+                        data-id="{{ initiative['id'] }}" data-type="down">
+                    👎
+                </button>
+            {% endif %}
+        
+            <!-- Удаление администратора -->
+            {% if session.get('is_admin') and session.get('user_id') != initiative.user_id %}
+                <form method="POST" action="{{ url_for('admin_delete_initiative', initiative_id=initiative.id) }}">
+                    <button type="submit" class="delete-btn">Удалить</button>
+                </form>
+            {% elif session.get('user_id') == initiative.user_id %}
+                <!-- Удаление владельцем -->
+                <form method="POST" action="{{ url_for('delete_initiative', initiative_id=initiative.id) }}">
+                    <button type="submit" class="delete-btn">Удалить</button>
+                </form>
+            {% endif %}
+        </div>        
     </div>
     {% endfor %}
 </div>
 {% endif %}
 
+<!-- Пагинация -->
 {% if page %}
 <div class="pagination">
     {% if page > 1 %}
@@ -112,6 +128,11 @@
 {% endif %}
 
 {% if not initiatives %}
-    <p>Инициатив пока нет. Будьте первым, кто предложит свою!</p>
+    <p class="pofini" style="text-align: center; font-size: 1.1rem; margin-top: 2rem;">
+        Инициатив пока нет. Будьте первым, кто предложит свою!
+    </p>
 {% endif %}
 {% endblock %}
+
+
+{% block style %}<link rel="stylesheet" href="{{ url_for('static', filename='stylesini.css') }}">{% endblock %}
