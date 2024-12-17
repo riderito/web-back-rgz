@@ -204,7 +204,7 @@ def start():
                     ORDER BY votes DESC
                     LIMIT %s OFFSET %s;""", (per_page, offset))
     else:
-        cur.execute("""SELECT id, title, content, strftime('%d.%m.%Y %H:%M', created_at) as created_at, votes, user_id
+        cur.execute("""SELECT id, title, content, strftime('%d.%m.%Y %H:%M', datetime(created_at, '+7 hours')) as created_at, votes, user_id
                     FROM initiatives
                     ORDER BY votes DESC
                     LIMIT ? OFFSET ?;""", (per_page, offset))
