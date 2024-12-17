@@ -163,8 +163,32 @@ def profile():
     # Проверяем, авторизован ли пользователь
     if 'user_id' not in session:
         return redirect(url_for('login'))
-    # Возвращаем шаблон профиля
-    return render_template('profile.html')
+    
+    user_id = session['user_id']
+    conn, cur = db_connect()
+
+    # Получаем инициативы пользователя
+    if current_app.config['DB_TYPE'] == 'postgres':
+        cur.execute("""
+            SELECT id, title, votes
+            FROM initiatives
+            WHERE user_id = %s
+            ORDER BY votes DESC;
+        """, (user_id,))
+    else:
+        cur.execute("""
+            SELECT id, title, votes
+            FROM initiatives
+            WHERE user_id = ?
+            ORDER BY votes DESC;
+        """, (user_id,))
+
+    user_initiatives = cur.fetchall()
+
+    db_close(conn, cur)
+
+    # Передаём инициативы в шаблон
+    return render_template('profile.html', initiatives=user_initiatives)
 
 
 @app.route('/delete_account', methods=['POST'])
@@ -194,20 +218,33 @@ def start():
     page = request.args.get('page', default=1, type=int)
     per_page = 20  # Количество инициатив на одной странице
     offset = (page - 1) * per_page
+    user_id = session.get('user_id')
 
     conn, cur = db_connect()
 
     # Выполняем запрос к базе данных
     if current_app.config['DB_TYPE'] == 'postgres':
-        cur.execute("""SELECT id, title, content, TO_CHAR(created_at, 'DD.MM.YYYY HH24:MI') AS created_at, votes, user_id
-                    FROM initiatives
-                    ORDER BY votes DESC
-                    LIMIT %s OFFSET %s;""", (per_page, offset))
+        cur.execute("""
+            SELECT i.id, i.title, i.content, 
+                   TO_CHAR(i.created_at, 'DD.MM.YYYY HH24:MI') AS created_at, 
+                   i.votes, i.user_id,
+                   v.vote_type AS user_vote
+            FROM initiatives i
+            LEFT JOIN votes v ON i.id = v.initiative_id AND v.user_id = %s
+            ORDER BY i.votes DESC
+            LIMIT %s OFFSET %s;
+        """, (user_id, per_page, offset))
     else:
-        cur.execute("""SELECT id, title, content, strftime('%d.%m.%Y %H:%M', datetime(created_at, '+7 hours')) as created_at, votes, user_id
-                    FROM initiatives
-                    ORDER BY votes DESC
-                    LIMIT ? OFFSET ?;""", (per_page, offset))
+        cur.execute("""
+            SELECT i.id, i.title, i.content, 
+                   strftime('%d.%m.%Y %H:%M', datetime(i.created_at, '+7 hours')) AS created_at, 
+                   i.votes, i.user_id,
+                   v.vote_type AS user_vote
+            FROM initiatives i
+            LEFT JOIN votes v ON i.id = v.initiative_id AND v.user_id = ?
+            ORDER BY i.votes DESC
+            LIMIT ? OFFSET ?;
+        """, (user_id, per_page, offset))
 
     initiatives = cur.fetchall()
     
@@ -221,7 +258,8 @@ def start():
             'created_at': initiative['created_at'] if isinstance(initiative, dict) else initiative[3],
             'votes': initiative['votes'] if isinstance(initiative, dict) else initiative[4],
             'number': i + 1 + offset,  # Добавляем порядковый номер
-            'user_id': initiative['user_id'] if isinstance(initiative, dict) else initiative[5]
+            'user_id': initiative['user_id'] if isinstance(initiative, dict) else initiative[5],
+            'user_vote': initiative['user_vote'] if isinstance(initiative, dict) else initiative[6]
         })
 
 
@@ -340,28 +378,15 @@ def vote():
             existing_vote_type = existing_vote[0] if isinstance(existing_vote, tuple) else existing_vote.get('vote_type')
 
             if existing_vote_type == vote_type:
-                return {'success': False, 'error': 'Вы уже проголосовали таким образом'}, 400
-
-            # Если голос изменился
-            vote_change = 2 if vote_type == 'up' else -2  # Изменение на 2, если голос меняется с up на down или наоборот
-            if current_app.config['DB_TYPE'] == 'postgres':
-                cur.execute(
-                    "DELETE FROM votes WHERE user_id = %s AND initiative_id = %s;",
-                    (user_id, initiative_id)
-                )
-                cur.execute(
-                    "INSERT INTO votes (user_id, initiative_id, vote_type) VALUES (%s, %s, %s);",
-                    (user_id, initiative_id, vote_type)
-                )
+                vote_change = -1 if vote_type == 'up' else 1
+                vote_type = None
+                if current_app.config['DB_TYPE'] == 'postgres':
+                    cur.execute("DELETE FROM votes WHERE user_id = %s AND initiative_id = %s;", (user_id, initiative_id))
+                else:
+                    cur.execute("DELETE FROM votes WHERE user_id = ? AND initiative_id = ?;", (user_id, initiative_id))
             else:
-                cur.execute(
-                    "DELETE FROM votes WHERE user_id = ? AND initiative_id = ?;",
-                    (user_id, initiative_id)
-                )
-                cur.execute(
-                    "INSERT INTO votes (user_id, initiative_id, vote_type) VALUES (?, ?, ?);",
-                    (user_id, initiative_id, vote_type)
-                )
+                # При попытке изменить голос
+                return {'success': False, 'error': 'Отмените текущий голос перед изменением'}, 400
         else:
             # Новый голос
             vote_change = 1 if vote_type == 'up' else -1
@@ -394,7 +419,7 @@ def vote():
 
         if deleted_initiative:
             conn.commit()
-            return {'success': True, 'deleted': True, 'updated_votes': None}, 200
+            return {'success': True, 'deleted': True, 'updated_votes': None, 'vote_type': None}, 200
 
         # Получаем обновленное количество голосов
         if current_app.config['DB_TYPE'] == 'postgres':
@@ -413,7 +438,7 @@ def vote():
         else:  # Если возвращен кортеж
             updated_votes = updated_votes[0]
 
-        return {'success': True, 'updated_votes': updated_votes, 'deleted': False}, 200
+        return {'success': True, 'updated_votes': updated_votes, 'deleted': False, 'vote_type': vote_type}, 200
 
     except Exception as e:
         conn.rollback()

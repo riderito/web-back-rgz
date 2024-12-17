@@ -3,6 +3,38 @@
 {% block content %}
 <h2>Привет, {{ session['login'] }}!</h2>
 <p>Ваш ID: {{ session['user_id'] }}</p>
+<hr>
+<h3>Ваши инициативы</h3>
+
+{% if initiatives %}
+<table>
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Название</th>
+            <th>Голоса</th>
+            <th>Удалить?</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for initiative in initiatives %}
+        <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ initiative['title'] if initiative['title'] else initiative[1] }}</td>
+            <td>{{ initiative['votes'] if initiative['votes'] else initiative[2] }}</td>
+            <td>
+                <!-- Кнопка удаления инициативы -->
+                <form method="POST" action="{{ url_for('delete_initiative', initiative_id=initiative['id'] if initiative['id'] else initiative[0]) }}">
+                    <button type="submit">Удалить</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>У вас пока нет инициатив.</p>
+{% endif %}
 
 <hr>
 <h3>Удаление учетной записи</h3>

@@ -25,6 +25,22 @@
                         // Обновляем количество голосов
                         const votesSpan = document.getElementById(`votes-${initiativeId}`);
                         votesSpan.textContent = data.updated_votes;
+
+                        // Обновляем цвет кнопок на основе возвращенного vote_type
+                        const upButton = initiativeDiv.querySelector(`.vote-btn[data-type="up"]`);
+                        const downButton = initiativeDiv.querySelector(`.vote-btn[data-type="down"]`);
+
+                        if (data.vote_type === 'up') {
+                            upButton.style.backgroundColor = 'black';
+                            downButton.style.backgroundColor = 'inherit';
+                        } else if (data.vote_type === 'down') {
+                            upButton.style.backgroundColor = 'inherit';
+                            downButton.style.backgroundColor = 'black';
+                        } else {
+                            // Если ни одно голосование не выбрано, сбрасываем оба цвета
+                            upButton.style.backgroundColor = 'inherit';
+                            downButton.style.backgroundColor = 'inherit';
+                        }
                     }
                 } else {
                     // Обрабатываем ошибки
@@ -39,6 +55,9 @@
 
 {% block content %}
 <h1>Инициативы</h1>
+{% if session.get('user_id') %}
+<button onclick="location.href='{{ url_for('add_initiative') }}'">Создай свою инициативу</button>
+{% endif %}
 <div class="initiatives">
     {% for initiative in initiatives %}
     <div class="initiative" data-id="{{ initiative['id'] }}">
@@ -47,18 +66,24 @@
         <p>{{ initiative['content'] }}</p>
         <small>Дата: {{ initiative['created_at'] }}</small>
         <p>Текущее количество голосов: <span id="votes-{{ initiative['id'] }}">{{ initiative['votes'] }}</span></p>
-        {% if session.get('login') %}
-            <button class="vote-btn" data-id="{{ initiative['id'] }}" data-type="up">👍</button>
-            <button class="vote-btn" data-id="{{ initiative['id'] }}" data-type="down">👎</button>
+        {% if session.get('user_id') %}
+        <button class="vote-btn" data-id="{{ initiative['id'] }}" data-type="up"
+                style="background-color: {% if initiative['user_vote'] == 'up' %}black{% else %}inherit{% endif %};">
+            👍
+        </button>
+        <button class="vote-btn" data-id="{{ initiative['id'] }}" data-type="down"
+                style="background-color: {% if initiative['user_vote'] == 'down' %}black{% else %}inherit{% endif %};">
+            👎
+        </button>
         {% endif %}
         {% if session.get('user_id') == initiative.user_id %}
             <form method="POST" action="{{ url_for('delete_initiative', initiative_id=initiative.id) }}">
-                <button type="submit" style="color:red;">Удалить</button>
+                <button type="submit">Удалить</button>
             </form>
         {% endif %}
         {% if session.get('is_admin') %}
             <form method="POST" action="{{ url_for('admin_delete_initiative', initiative_id=initiative.id) }}">
-                <button type="submit" style="color:red;">Удалить инициативу</button>
+                <button type="submit">Удалить инициативу</button>
             </form>
         {% endif %}
     </div>

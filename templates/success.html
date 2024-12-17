@@ -12,6 +12,6 @@
         <h1>Успешное действие!</h1>
         <p>Детали не указаны.</p>
     {% endif %}
-    <a href="{{ url_for('start') }}"><button>Перейти к инициативам</button></a>
+    <button onclick="location.href='{{ url_for('start') }}'">Перейти к инициативам</button>
 </div>
 {% endblock %}

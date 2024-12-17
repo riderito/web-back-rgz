@@ -17,7 +17,6 @@
             <a href="{{ url_for('index') }}">Главная</a>
             <a href="{{ url_for('start') }}">Инициативы</a>
             {% if session.get('user_id') %}
-                <a href="{{ url_for('add_initiative') }}">Добавить инициативу</a>
                 <a href="{{ url_for('profile') }}">Мой профиль</a>
                 {% if session.get('is_admin') %}
                     <a href="{{ url_for('admin_users') }}">Управление пользователями</a>
