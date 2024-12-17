@@ -199,32 +199,35 @@ def start():
 
     # Выполняем запрос к базе данных
     if current_app.config['DB_TYPE'] == 'postgres':
-        cur.execute("SELECT id, title, content, created_at, votes, user_id FROM initiatives ORDER BY votes DESC LIMIT %s OFFSET %s;", (per_page, offset))
+        cur.execute("""SELECT id, title, content, created_at, votes, user_id
+                    FROM initiatives
+                    ORDER BY votes DESC
+                    LIMIT %s OFFSET %s;""", (per_page, offset))
     else:
-        cur.execute("SELECT id, title, content, created_at, votes, user_id FROM initiatives ORDER BY votes DESC LIMIT ? OFFSET ?;", (per_page, offset))
+        cur.execute("""SELECT id, title, content, created_at, votes, user_id
+                    FROM initiatives
+                    ORDER BY votes DESC
+                    LIMIT ? OFFSET ?;""", (per_page, offset))
 
     initiatives = cur.fetchall()
     
     # Форматируем дату и добавляем порядковый номер
-    # Форматируем дату и добавляем порядковый номер
     formatted_initiatives = []
     for i, initiative in enumerate(initiatives):
         formatted_initiatives.append({
-            'id': initiative['id'],
-            'title': initiative['title'],
-            'content': initiative['content'],
-            'created_at': initiative['created_at'].strftime("%d.%m.%Y %H:%M") if isinstance(initiative['created_at'], datetime) else initiative['created_at'],
-            'votes': initiative['votes'],
+            'id': initiative['id'] if isinstance(initiative, dict) else initiative[0],
+            'title': initiative['title'] if isinstance(initiative, dict) else initiative[1],
+            'content': initiative['content'] if isinstance(initiative, dict) else initiative[2],
+            'created_at': (initiative['created_at'] if isinstance(initiative, dict) else initiative[3]).strftime("%d.%m.%Y %H:%M") 
+                          if isinstance(initiative['created_at'] if isinstance(initiative, dict) else initiative[3], datetime) 
+                          else initiative['created_at'] if isinstance(initiative, dict) else initiative[3],
+            'votes': initiative['votes'] if isinstance(initiative, dict) else initiative[4],
             'number': i + 1 + offset,  # Добавляем порядковый номер
-            'user_id': initiative['user_id']
+            'user_id': initiative['user_id'] if isinstance(initiative, dict) else initiative[5]
         })
 
-    # Проверяем наличие следующей страницы
-    if current_app.config['DB_TYPE'] == 'postgres':
-        cur.execute("SELECT COUNT(*) FROM initiatives;")
-    else:
-        cur.execute("SELECT COUNT(*) FROM initiatives;")
 
+    cur.execute("SELECT COUNT(*) FROM initiatives;")
     total_count = cur.fetchone()
 
     # Извлекаем общее количество
