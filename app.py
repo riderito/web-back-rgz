@@ -375,7 +375,7 @@ def vote():
         vote_change = 0
         if existing_vote is not None:
             # Упрощение обработки fetched данных
-            existing_vote_type = existing_vote[0] if isinstance(existing_vote, tuple) else existing_vote.get('vote_type')
+            existing_vote_type = existing_vote['vote_type'] if hasattr(existing_vote, '__getitem__') and not isinstance(existing_vote, tuple) else existing_vote[0]
 
             if existing_vote_type == vote_type:
                 vote_change = -1 if vote_type == 'up' else 1
@@ -433,10 +433,7 @@ def vote():
         if updated_votes is None:
             return {'success': False, 'error': 'Не удалось получить обновленные голоса'}, 500
 
-        if isinstance(updated_votes, dict):  # Если возвращен словарь
-            updated_votes = updated_votes['votes']
-        else:  # Если возвращен кортеж
-            updated_votes = updated_votes[0]
+        updated_votes = updated_votes['votes'] if hasattr(updated_votes, '__getitem__') and not isinstance(updated_votes, tuple) else updated_votes[0]
 
         return {'success': True, 'updated_votes': updated_votes, 'deleted': False, 'vote_type': vote_type}, 200
 
