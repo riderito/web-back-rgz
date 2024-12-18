@@ -1,0 +1,52 @@
+/* Общий контейнер для страницы */
+.success-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: calc(100vh - 14rem); /* Учитываем отступы */
+    padding: 2rem;
+  }
+  
+  /* Заголовок */
+  .success-page__title {
+    font-size: 2.5rem;
+    color: #406ff3;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    font-weight: bold;
+  }
+  
+  /* Текст */
+  .success-page__text {
+    font-size: 1.2rem;
+    color: #6a778e;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+  }
+  
+  /* Кнопка перехода */
+  .success-page__button {
+    padding: 1rem 2rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    outline: none;
+  
+    /* Градиент с переливанием */
+    background: linear-gradient(90deg, #235dff, #a56afd, #f1c25d);
+    background-size: 200% 200%; /* Увеличиваем размер градиента */
+    animation: glowing 8s infinite linear; /* Анимация без прыжков */
+    transition: transform 0.3s ease;
+    box-shadow: 0 4px 15px rgba(64, 111, 243, 0.4);
+  }
+  
+  .success-page__button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(64, 111, 243, 0.6);
+  }
+  

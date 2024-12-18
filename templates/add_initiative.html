@@ -5,15 +5,22 @@
 {% endblock %}
 
 {% block content %}
-<h1>Добавить инициативу</h1>
-<form action="/add_initiative" method="POST">
-    <label for="title">Тема инициативы:</label><br>
-    <input type="text" id="title" name="title" required><br>
-    <label for="content">Описание:</label><br>
-    <textarea id="content" name="content" rows="5" required></textarea><br>
+<h1 class="page-title">Добавить инициативу</h1>
+<div class="initiative-add-container">
+  <form action="/add_initiative" method="POST">
+    <label for="title">Тема инициативы:</label>
+    <input type="text" id="title" name="title" required>
+    
+    <label for="content">Описание:</label>
+    <textarea id="content" name="content" rows="5" required></textarea>
+    
     <button type="submit">Добавить</button>
-</form>
-{% if error %}
-<p style="color:red;">{{ error }}</p>
-{% endif %}
+  </form>
+  
+  {% if error %}
+  <p class="error">{{ error }}</p>
+  {% endif %}
+</div>
 {% endblock %}
+
+{% block style %}<link rel="stylesheet" href="{{ url_for('static', filename='add.css') }}">{% endblock %}

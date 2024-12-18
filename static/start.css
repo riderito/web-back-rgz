@@ -1,0 +1,330 @@
+/* Общие стили для страницы инициатив */
+h1, h2 {
+    margin: 0.5rem 0;
+    color: #333;
+}
+
+.pofini {
+    margin-top: 0.5rem; /* Добавляем отступ сверху */
+    margin-bottom: 0; /* Убираем отступ снизу */
+    color: #333;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Количество строк */
+    -webkit-box-orient: vertical;
+    overflow: hidden; /* Обрезка текста */
+    text-overflow: ellipsis; /* Добавление троеточия */
+    line-height: 1.5; /* Высота строки */
+    max-height: calc(1.5em * 3); /* Лимит высоты */
+    transition: max-height 0.3s ease-in-out;
+}
+
+.pofini.expanded {
+    display: block; /* Снимает ограничения */
+    max-height: none; /* Полностью раскрывает текст */
+}
+
+
+.initiatives {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.initiative {
+    display: flex;
+    flex-direction: column; /* Размещаем дочерние элементы вертикально */
+    justify-content: space-between; /* Отступ между верхом и низом */
+    max-height: 400px; /* Пример */
+    height: auto;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 1rem; /* Отступ между соседними блоками */
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    z-index: 1;
+}
+
+.initiative:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.initiative h2 {
+    font-size: 1.2rem;
+    color: #406ff3;
+    margin-bottom: 0.5rem;
+}
+
+.initiative p {
+    color: #555;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.initiative small {
+    color: #888;
+    font-size: 0.8rem;
+    display: block;
+    margin-top: 0.5rem;
+}
+
+.vote-btn {
+    background-color: inherit;
+    border: 1px solid #406ff3;
+    color: #406ff3;
+    font-size: 1rem;
+    margin: 0.5rem 0.3rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
+}
+
+.vote-btn:hover {
+    background-color: #406ff3;
+    color: #fff;
+    transform: scale(1.05);
+}
+
+.vote-btn[data-type="up"] {
+    border-color: #2ecc71;
+    color: #2ecc71;
+}
+
+.vote-btn[data-type="up"]:hover {
+    background-color: #2ecc71;
+    color: #fff;
+}
+
+.vote-btn[data-type="down"] {
+    border-color: #e74c3c;
+    color: #e74c3c;
+}
+
+.vote-btn[data-type="down"]:hover {
+    background-color: #e74c3c;
+    color: #fff;
+}
+
+.vote-btn.active-vote {
+    background-color: #2ecc71; /* Для положительного голоса */
+    color: #fff;
+}
+
+.vote-btn[data-type="down"].active-vote {
+    background-color: #e74c3c; /* Для отрицательного голоса */
+    color: #fff;
+}
+
+button, .pagination button {
+    background-color: #fff;
+    color: black;
+    border: none;
+    border-radius: 25px;
+    padding: 0.6rem 1.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(64, 111, 243, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.delete-btn:hover {
+    background-color: #e74c3c;
+    color: #fff;
+}
+
+button:hover, .pagination button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(64, 111, 243, 0.3);
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin: 2rem 0;
+    gap: 1rem;
+}
+
+a {
+    color: #406ff3;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.2s ease;
+}
+
+a:hover {
+    color: #304cb2;
+    text-decoration: underline;
+}
+
+.sorting-links {
+    text-align: center;
+    margin: 1.5rem 0;
+}
+
+.sorting-links a {
+    margin: 0 0.5rem;
+}
+
+
+.button-container {
+    display: flex; /* Используем Flexbox */
+    gap: 0.5rem; /* Отступ между элементами */
+    margin-top: 1rem; /* Отступ сверху */
+    font-weight: bold;
+}
+
+.button-container button,
+.button-container form {
+    margin: 0; /* Убираем внешние отступы */
+}
+
+.initiative-footer {
+    margin-top: auto; /* Прижимает блок к нижней части родителя */
+    
+}
+
+.toggle-btn {
+    width: 200px;
+    margin: 10px 0;
+    text-align: center;
+}
+
+
+
+/* Фон загрузочного экрана */
+#preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #ffffff;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Круг */
+.circle {
+    position: relative;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background-color: #e0e0e0; /* Серый фон */
+    overflow: hidden;
+}
+
+/* Заполнение круга */
+.circle .fill {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #406ff3; /* Синий цвет заполнения */
+    animation: fillCircle 2s ease-out forwards; /* Анимация заполнения */
+}
+
+/* Анимация заполнения круга */
+@keyframes fillCircle {
+    0% {
+        top: 100%;
+    }
+    100% {
+        top: 0;
+    }
+}
+
+/* Скрытие прелоадера */
+#preloader.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease; /* Плавное исчезновение */
+}
+
+
+
+
+/* Контейнер для уведомлений */
+.notification-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  /* Уведомление */
+  .notification {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 1rem;
+    color: #fff;
+    animation: fadeIn 0.5s, fadeOut 0.5s 4.5s;
+    opacity: 0;
+    pointer-events: none;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  .notification.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  
+  /* Типы уведомлений */
+  .notification.success {
+    background-color: #28a745; /* Зеленый */
+  }
+  
+  .notification.error {
+    background-color: #dc3545; /* Красный */
+  }
+  
+  .notification.info {
+    background-color: #406ff3; /* Серый */
+  }
+  /* Крестик (кнопка закрытия) */
+.notification button {
+    background: none; /* Убрать фон */
+    border: none; /* Убрать границы */
+    color: #fff; /* Цвет крестика */
+    font-size: 1.2rem; /* Размер крестика */
+    cursor: pointer; /* Курсор в виде указателя */
+    margin-left: 20px; /* Расстояние между текстом и крестиком */
+    padding: 0 5px; /* Дополнительный отступ вокруг крестика */
+}
+
+  /* Анимации */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes fadeOut {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+  }
+  

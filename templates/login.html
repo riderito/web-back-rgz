@@ -21,3 +21,5 @@
 </form>
 <a href="{{ url_for('register') }}">Нет аккаунта? Зарегистрируйся</a>
 {% endblock %}
+
+{% block style %}<link rel="stylesheet" href="{{ url_for('static', filename='regORlog.css') }}">{% endblock %}

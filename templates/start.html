@@ -6,6 +6,28 @@
 
 {% block js %}
 <script>
+    function showNotification(message, type) {
+        const container = document.getElementById('notification-container');
+        if (!container) return; // Если контейнер не найден, не делаем ничего
+        
+        // Создаем уведомление
+        const notification = document.createElement('div');
+        notification.className = `notification ${type} show`;
+        notification.innerHTML = `
+            <span>${message}</span>
+            <button onclick="this.parentElement.remove()">✖</button>
+        `;
+        
+        // Добавляем в контейнер
+        container.appendChild(notification);
+        
+        // Убираем уведомление через 5 секунд
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => notification.remove(), 500);
+        }, 5000);
+    }
+    
     document.querySelectorAll('.vote-btn').forEach(button => {
         button.addEventListener('click', function () {
             const initiativeId = this.dataset.id;
@@ -21,39 +43,125 @@
                 if (data.success) {
                     const initiativeDiv = document.querySelector(`.initiative[data-id="${initiativeId}"]`);
                     
+                    let message = '';
+                    let type = '';
+
+                    // Проверяем ответ от сервера
+                    if (data.vote_type === null) {
+                        message = 'Вы отменили свой голос!';
+                        type = 'info';
+                    } else if (voteType === 'up') {
+                        message = 'Вы проголосовали за!';
+                        type = 'success';
+                    } else if (voteType === 'down') {
+                        message = 'Вы проголосовали против!';
+                        type = 'error';
+                    }
+
+                    showNotification(message, type);
+            
                     if (data.deleted) {
-                        // Уведомляем об удалении и убираем DOM-элемент
                         alert('Инициатива удалена из-за низкого рейтинга!');
-                        initiativeDiv.remove();
+                        if (initiativeDiv) initiativeDiv.remove();
                     } else if (data.updated_votes !== undefined) {
-                        // Обновляем количество голосов
                         const votesSpan = document.getElementById(`votes-${initiativeId}`);
-                        votesSpan.textContent = data.updated_votes;
-
-                        // Обновляем цвет кнопок на основе возвращенного vote_type
-                        const upButton = initiativeDiv.querySelector(`.vote-btn[data-type="up"]`);
-                        const downButton = initiativeDiv.querySelector(`.vote-btn[data-type="down"]`);
-
-                        if (data.vote_type === 'up') {
-                            upButton.style.backgroundColor = 'black';
-                            downButton.style.backgroundColor = 'inherit';
-                        } else if (data.vote_type === 'down') {
-                            upButton.style.backgroundColor = 'inherit';
-                            downButton.style.backgroundColor = 'black';
-                        } else {
-                            // Если ни одно голосование не выбрано, сбрасываем оба цвета
-                            upButton.style.backgroundColor = 'inherit';
-                            downButton.style.backgroundColor = 'inherit';
+                        if (votesSpan) votesSpan.textContent = data.updated_votes;
+            
+                        if (initiativeDiv) {
+                            const upButton = initiativeDiv.querySelector(`.vote-btn[data-type="up"]`);
+                            const downButton = initiativeDiv.querySelector(`.vote-btn[data-type="down"]`);
+            
+                            if (data.vote_type === 'up') {
+                                upButton?.classList.add('active-vote');
+                                downButton?.classList.remove('active-vote');
+                            } else if (data.vote_type === 'down') {
+                                downButton?.classList.add('active-vote');
+                                upButton?.classList.remove('active-vote');
+                            } else {
+                                upButton?.classList.remove('active-vote');
+                                downButton?.classList.remove('active-vote');
+                            }
                         }
                     }
                 } else {
-                    // Обрабатываем ошибки
-                    alert(data.error || 'Ошибка при голосовании');
+                    // Проверяем текст ошибки для "Отмените текущий голос перед изменением"
+                    if (data.error === 'Отмените текущий голос перед изменением') {
+                        showNotification(data.error, 'info'); // Тип info для синего цвета
+                    } else {
+                        showNotification(data.error || 'Ошибка при голосовании', 'error');
+                    }
                 }
-            })
-            .catch(error => console.error('Ошибка:', error));
+            })            
+            .catch(error => {
+                console.error('Ошибка при отправке запроса:', error);
+                showNotification('Ошибка соединения', 'error');
+            });
         });
-    });      
+    });
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.pofini').forEach(content => {
+            const button = document.querySelector(`.toggle-btn[data-id="${content.id.split('-')[1]}"]`);
+    
+            // Определяем, обрезан ли текст
+            if (content.scrollHeight > content.offsetHeight) {
+                button.style.display = 'inline-block'; // Показываем кнопку
+            }
+    
+            button.addEventListener('click', function () {
+                const isCollapsed = content.classList.contains('collapsed');
+    
+                if (isCollapsed) {
+                    // Раскрываем текст
+                    content.style.maxHeight = content.scrollHeight + 'px'; // Устанавливаем точную высоту
+                    content.classList.remove('collapsed');
+                    content.classList.add('expanded');
+    
+                    // После окончания перехода убираем max-height
+                    content.addEventListener('transitionend', function onTransitionEnd() {
+                        if (content.classList.contains('expanded')) {
+                            content.style.maxHeight = 'none';
+                            content.removeEventListener('transitionend', onTransitionEnd);
+                        }
+                    });
+    
+                    button.textContent = 'Скрыть';
+                } else {
+                    // Скрываем текст
+                    content.style.maxHeight = content.scrollHeight + 'px'; // Устанавливаем текущую высоту для плавности
+                    content.classList.remove('expanded');
+                    content.classList.add('collapsed');
+    
+                    // Обновляем max-height через небольшой таймаут, чтобы анимация сработала
+                    requestAnimationFrame(() => {
+                        content.style.maxHeight = calcHeight(content) + 'px'; // Ограничиваем до 3 строк
+                    });
+    
+                    button.textContent = 'Показать больше';
+                }
+            });
+    
+            // Функция для вычисления высоты 3 строк
+            function calcHeight(el) {
+                const lineHeight = parseFloat(getComputedStyle(el).lineHeight);
+                const clampLines = 3; // Количество строк для обрезки
+                return lineHeight * clampLines;
+            }
+        });
+    });
+    window.addEventListener('load', () => {
+        const preloader = document.getElementById('preloader');
+    
+        // Ждём завершения анимации круга (2 секунды)
+        setTimeout(() => {
+            preloader.classList.add('hidden');
+    
+            // Удаляем элемент из DOM через небольшую задержку
+            setTimeout(() => {
+                preloader.style.display = 'none';
+            }, 500);
+        }, 2000); // Время совпадает с длительностью анимации (2s)
+    });
 </script>
 {% endblock %} 
 
@@ -81,34 +189,38 @@
             <h1 style="font-size: 2rem; flex-shrink: 0; margin: 0;">{{ initiative['number'] }}</h1>
             <h2 style="margin: 0;">{{ initiative['title'] }}</h2>
         </div>
-        <p class="pofini">{{ initiative['content'] }}</p>
-        <small>Дата: {{ initiative['created_at'] }}</small>
-        <p class="pofini">Кол-во голосов: <span id="votes-{{ initiative['id'] }}">{{ initiative['votes'] }}</span></p>
-        
-        <div class="button-container">
-            <!-- Кнопки голосования -->
-            {% if session.get('user_id') %}
-                <button class="vote-btn {% if initiative['user_vote'] == 'up' %}active-vote{% endif %}" 
-                        data-id="{{ initiative['id'] }}" data-type="up">
-                    👍
-                </button>
-                <button class="vote-btn {% if initiative['user_vote'] == 'down' %}active-vote{% endif %}" 
-                        data-id="{{ initiative['id'] }}" data-type="down">
-                    👎
-                </button>
-            {% endif %}
-        
-            <!-- Удаление администратора -->
-            {% if session.get('is_admin') and session.get('user_id') != initiative.user_id %}
-                <form method="POST" action="{{ url_for('admin_delete_initiative', initiative_id=initiative.id) }}">
-                    <button type="submit" class="delete-btn">Удалить</button>
-                </form>
-            {% elif session.get('user_id') == initiative.user_id %}
-                <!-- Удаление владельцем -->
-                <form method="POST" action="{{ url_for('delete_initiative', initiative_id=initiative.id) }}">
-                    <button type="submit" class="delete-btn">Удалить</button>
-                </form>
-            {% endif %}
+        <p class="pofini collapsed" id="content-{{ initiative['id'] }}">{{ initiative['content'] }}</p>
+        <button class="toggle-btn" data-id="{{ initiative['id'] }}" style="display: none;">Показать больше</button>
+
+        <div class="initiative-footer">
+            <small>Дата: {{ initiative['created_at'] }}</small>
+            <p class="pofini">Кол-во голосов: <span id="votes-{{ initiative['id'] }}">{{ initiative['votes'] }}</span></p>
+            
+            <div class="button-container">
+                <!-- Кнопки голосования -->
+                {% if session.get('user_id') %}
+                    <button class="vote-btn {% if initiative['user_vote'] == 'up' %}active-vote{% endif %}" 
+                            data-id="{{ initiative['id'] }}" data-type="up">
+                        👍
+                    </button>
+                    <button class="vote-btn {% if initiative['user_vote'] == 'down' %}active-vote{% endif %}" 
+                            data-id="{{ initiative['id'] }}" data-type="down">
+                        👎
+                    </button>
+                {% endif %}
+            
+                <!-- Удаление администратора -->
+                {% if session.get('is_admin') and session.get('user_id') != initiative.user_id %}
+                    <form method="POST" action="{{ url_for('admin_delete_initiative', initiative_id=initiative.id) }}">
+                        <button type="submit" class="delete-btn">Удалить</button>
+                    </form>
+                {% elif session.get('user_id') == initiative.user_id %}
+                    <!-- Удаление владельцем -->
+                    <form method="POST" action="{{ url_for('delete_initiative', initiative_id=initiative.id) }}">
+                        <button type="submit" class="delete-btn">Удалить</button>
+                    </form>
+                {% endif %}
+            </div>
         </div>        
     </div>
     {% endfor %}
@@ -135,4 +247,4 @@
 {% endblock %}
 
 
-{% block style %}<link rel="stylesheet" href="{{ url_for('static', filename='stylesini.css') }}">{% endblock %}
+{% block style %}<link rel="stylesheet" href="{{ url_for('static', filename='start.css') }}">{% endblock %}

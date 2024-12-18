@@ -1,0 +1,110 @@
+/* Общий контейнер для страницы профиля */
+.profile-page {
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .profile-page h2 {
+    font-size: 2rem;
+    color: #406ff3;
+    margin-bottom: 1rem;
+  }
+  
+  .profile-page p {
+    font-size: 1rem;
+    color: #6a778e;
+    margin-bottom: 1.5rem;
+  }
+  
+  .profile-page hr {
+    border: none;
+    border-top: 1px solid #e0e0e0;
+    margin: 0rem 0;
+  }
+  
+  /* Секция инициатив */
+  .profile-page__initiatives {
+    margin-top: 2rem;
+  }
+  
+  .profile-page__initiatives h3 {
+    font-size: 1.5rem;
+    color: #406ff3;
+    margin-bottom: 1rem;
+  }
+  
+  /* Таблица */
+  .profile-page table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .profile-page table thead {
+    background-color: #406ff3;
+    color: #fff;
+  }
+  
+  .profile-page table thead th {
+    padding: 1rem;
+    text-align: left;
+    font-size: 1rem;
+  }
+  
+  .profile-page table tbody td {
+    padding: 1rem;
+    border-bottom: 1px solid #e0e0e0;
+    font-size: 0.95rem;
+    color: #6a778e;
+  }
+  
+  .profile-page table tbody tr:hover {
+    background-color: #f9f9f9;
+  }
+  
+  /* Кнопки */
+  .profile-page button {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    color: #fff;
+    background-color: #e74c3c;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .profile-page button:hover {
+    background-color: #c0392b;
+    transform: scale(1.05);
+  }
+  
+  /* Кнопка удаления учетной записи */
+  .profile-page .delete-btn {
+    margin-top: 1rem;
+    background-color: #e74c3c;
+    color: #fff;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    padding: 0.7rem 1.5rem;
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+  }
+  
+  .profile-page .delete-btn:hover {
+    background-color: #c0392b;
+    transform: scale(1.05);
+  }
+  
+  /* Если нет инициатив */
+  .profile-page .no-initiatives {
+    font-size: 1rem;
+    color: #6a778e;
+    margin-top: 1rem;
+    text-align: center;
+  }
+  

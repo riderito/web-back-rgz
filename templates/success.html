@@ -5,17 +5,19 @@
 {% endblock %}
 
 {% block content %}
-<div>
+<div class="success-page">
     {% if action == 'register' %}
-        <h1>Добро пожаловать, {{ login }}!</h1>
-        <p>Вы успешно зарегистрировались и вошли в систему.</p>
+      <h1 class="success-page__title">Добро пожаловать, {{ login }}!</h1>
+      <p class="success-page__text">Вы успешно зарегистрировались и вошли в систему.</p>
     {% elif action == 'login' %}
-        <h1>Рады, что вы вернулись, {{ login }}!</h1>
-        <p>Вы успешно вошли в систему.</p>
+      <h1 class="success-page__title">Рады, что вы вернулись, {{ login }}!</h1>
+      <p class="success-page__text">Вы успешно вошли в систему.</p>
     {% else %}
-        <h1>Успешное действие!</h1>
-        <p>Детали не указаны.</p>
+      <h1 class="success-page__title">Успешное действие!</h1>
+      <p class="success-page__text">Детали не указаны.</p>
     {% endif %}
-    <button onclick="location.href='{{ url_for('start') }}'">Перейти к инициативам</button>
-</div>
+    <button class="success-page__button" onclick="location.href='{{ url_for('start') }}'">Перейти к инициативам</button>
+  </div>
 {% endblock %}
+
+{% block style %}<link rel="stylesheet" href="{{ url_for('static', filename='success.css') }}">{% endblock %}

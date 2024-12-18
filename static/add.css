@@ -1,0 +1,84 @@
+/* Контейнер для формы */
+.initiative-add-container {
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+    max-width: 600px;
+    margin: 2rem auto;
+    background: #f9f9f9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+  }
+  
+  /* Заголовок */
+h1 {
+    font-size: 2rem;
+    color: #406ff3;
+    text-align: center;
+    margin-top: 6rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  /* Метки формы */
+  .initiative-add-container label {
+    font-size: 1rem;
+    color: #6a778e;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+  
+  /* Поля ввода */
+  .initiative-add-container input[type="text"],
+  .initiative-add-container textarea {
+    font-size: 1rem;
+    padding: 0.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+    width: 100%;
+    transition: border-color 0.3s ease;
+  }
+  
+  .initiative-add-container input[type="text"]:focus,
+  .initiative-add-container textarea:focus {
+    border-color: #406ff3;
+    box-shadow: 0 0 5px rgba(64, 111, 243, 0.3);
+  }
+  
+  /* Поле textarea */
+  .initiative-add-container textarea {
+    resize: vertical; /* Ограничиваем возможность изменения размера только по вертикали */
+  }
+  
+  /* Кнопка */
+  .initiative-add-container button {
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    outline: none;
+    align-self: center;
+  
+    background: linear-gradient(90deg, #235dff, #a56afd, #f1c25d);
+    background-size: 200% 200%;
+    animation: glowing 6s infinite linear;
+    transition: transform 0.3s ease;
+    box-shadow: 0 4px 15px rgba(64, 111, 243, 0.4);
+  }
+  
+  .initiative-add-container button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(64, 111, 243, 0.6);
+  }
+  
+  /* Ошибка */
+  .initiative-add-container p.error {
+    color: red;
+    text-align: center;
+    margin-top: 1rem;
+  }
+  

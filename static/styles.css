@@ -10,6 +10,7 @@ body {
 .navbar {
   position: fixed;
   top: 1rem;
+  z-index: 10;
   left: 1rem;
   background: #fff;
   border-radius: 10px;
@@ -45,6 +46,7 @@ body {
 }
 
 .navbar__link span {
+  z-index: 20;
   position: absolute;
   left: 100%;
   transform: translate(-3rem);
@@ -145,6 +147,7 @@ footer {
     border-radius: 10px;
     padding: 0.2rem 0.8rem;
     box-shadow: 0 0 40px rgba(0, 0, 0, 0.03);
+    z-index: 20;
 }
  
 
@@ -157,7 +160,7 @@ footer {
     justify-content: center;
     align-items: center;
     text-align: center;
-    height: calc(100vh - 10rem); /* Учитываем отступы */
+    height: calc(100vh - 14rem); /* Учитываем отступы */
     padding: 2rem;
 }
 

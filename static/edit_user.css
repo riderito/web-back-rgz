@@ -1,0 +1,77 @@
+/* Общий стиль страницы */
+.user-edit-container {
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+    max-width: 500px;
+    margin: 2rem auto;
+    background: #f9f9f9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+  }
+  
+  .user-edit-container form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .user-edit-container label {
+    font-size: 1rem;
+    color: #6a778e;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+  }
+  
+  .user-edit-container label input[type="checkbox"] {
+    margin-right: 0.5rem;
+  }
+  
+  .user-edit-container input[type="text"] {
+    font-size: 1rem;
+    padding: 0.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+    transition: border-color 0.3s ease;
+  }
+  
+  .user-edit-container input[type="text"]:focus {
+    border-color: #406ff3;
+    box-shadow: 0 0 5px rgba(64, 111, 243, 0.3);
+  }
+  
+  /* Кнопка сохранения */
+  .user-edit-container button {
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    outline: none;
+    max-width: 200px; /* Ограничение ширины кнопки */
+    align-self: center; /* Центровка кнопки */
+    
+    background: linear-gradient(90deg, #235dff, #a56afd, #f1c25d);
+    background-size: 200% 200%;
+    animation: glowing 6s infinite linear;
+    transition: transform 0.3s ease;
+    box-shadow: 0 4px 15px rgba(64, 111, 243, 0.4);
+  }
+  
+  .user-edit-container button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(64, 111, 243, 0.6);
+  }
+  h2 {
+    font-size: 1.7rem;
+    color: #406ff3;
+    text-align: center;
+    margin-top: 10rem;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+  }
+  

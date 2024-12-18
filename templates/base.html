@@ -12,6 +12,11 @@
     <link rel="icon" href="{{ url_for('static', filename='favicon-32x32.png') }}">
 </head>
 <body>
+  <div id="preloader">
+    <div class="circle">
+        <div class="fill"></div>
+    </div>
+  </div>
     <header>
         <nav class="navbar">
             <ul class="navbar__menu">
@@ -61,6 +66,7 @@
     <footer>
         <p>© 2024 Степук Алексей Витальевич, ФБИ-24</p>
     </footer>
+    <div class="notification-container" id="notification-container"></div>
 </body>
 <script src="https://unpkg.com/feather-icons"></script>
   <script>

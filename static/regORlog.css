@@ -1,0 +1,86 @@
+/* Общий стиль для заголовков */
+h2 {
+    font-size: 2rem;
+    color: #406ff3;
+    text-align: center;
+    margin-top: 7rem;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+  }
+  
+  /* Общий стиль формы */
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem; /* Отступ между полями формы */
+    max-width: 400px;
+    margin: 0 auto; /* Центрирование формы */
+    padding: 2rem;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Метки (label) */
+  form label {
+    font-size: 1rem;
+    color: #555;
+    font-weight: bold;
+  }
+  
+  /* Поля ввода (input) */
+  form input {
+    padding: 0.75rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    font-size: 1rem;
+    outline: none;
+    transition: border 0.3s ease;
+  }
+  
+  form input:focus {
+    border-color: #406ff3;
+    box-shadow: 0 0 8px rgba(64, 111, 243, 0.2);
+  }
+  
+  /* Кнопка отправки формы */
+  form button {
+    background-color: #406ff3;
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    padding: 0.8rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+  }
+  
+  form button:hover {
+    background-color: #304cb2;
+    transform: translateY(-2px);
+  }
+  
+  /* Ссылка под формой */
+  a {
+    color: #406ff3;
+    text-align: center;
+    display: block;
+    margin-top: 1rem;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 0.9rem;
+    transition: color 0.2s ease;
+  }
+  
+  a:hover {
+    color: #6a778e;
+  }
+
+  /* Сообщение об ошибке */
+  form p {
+    color: #e74c3c;
+    font-size: 0.9rem;
+    text-align: center;
+    margin: 0;
+  }
+  

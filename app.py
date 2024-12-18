@@ -233,7 +233,7 @@ def start():
     elif sort_by == 'votes_low':
         order_clause = 'ORDER BY votes ASC'
     else:
-        order_clause = 'ORDER BY votes DESC'  # По умолчанию
+        order_clause = 'ORDER BY created_at ASC'  # По умолчанию
 
     conn, cur = db_connect()
 
