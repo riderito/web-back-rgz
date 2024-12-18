@@ -434,7 +434,7 @@ def vote():
 
         if deleted_initiative:
             conn.commit()
-            return {'success': True, 'deleted': True, 'updated_votes': None, 'vote_type': None}, 200
+            return {'success': True, 'deleted': True, 'updated_votes': None, 'vote_type': vote_type}, 200
 
         # Получаем обновленное количество голосов
         if current_app.config['DB_TYPE'] == 'postgres':
