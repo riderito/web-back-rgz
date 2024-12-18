@@ -221,7 +221,7 @@ def start():
     user_id = session.get('user_id')
 
     # Получаем параметр сортировки (по умолчанию 'newest')
-    sort_by = request.args.get('sort', 'votes_high')
+    sort_by = request.args.get('sort', 'newest')
 
     # Формируем SQL-запрос в зависимости от параметра сортировки
     if sort_by == 'newest':
@@ -233,7 +233,7 @@ def start():
     elif sort_by == 'votes_low':
         order_clause = 'ORDER BY votes ASC'
     else:
-        order_clause = 'ORDER BY created_at ASC'  # По умолчанию
+        order_clause = 'ORDER BY created_at DESC'  # По умолчанию
 
     conn, cur = db_connect()
 
