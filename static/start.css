@@ -14,7 +14,7 @@ h1, h2 {
     overflow: hidden; /* Обрезка текста */
     text-overflow: ellipsis; /* Добавление троеточия */
     line-height: 1.5; /* Высота строки */
-    max-height: calc(1.5em * 3); /* Лимит высоты */
+    max-height: calc(1.5em * 4); /* Лимит высоты */
     transition: max-height 0.3s ease-in-out;
 }
 
