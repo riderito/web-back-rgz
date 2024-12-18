@@ -9,7 +9,7 @@ h1, h2 {
     margin-bottom: 0; /* Убираем отступ снизу */
     color: #333;
     display: -webkit-box;
-    -webkit-line-clamp: 3; /* Количество строк */
+    -webkit-line-clamp: 4; /* Количество строк */
     -webkit-box-orient: vertical;
     overflow: hidden; /* Обрезка текста */
     text-overflow: ellipsis; /* Добавление троеточия */
